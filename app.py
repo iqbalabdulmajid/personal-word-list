@@ -3,13 +3,19 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 from pymongo import MongoClient
 import requests
 from datetime import datetime
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
 
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
+MONGODB_URI = os.environ.get("MONGODB_URI")
+DB_NAME = os.environ.get("DB_NAME")
 
 app = Flask(__name__)
-
-client = MongoClient('mongodb://iqbal:iqbal@ac-scdewbe-shard-00-00.ie0bayw.mongodb.net:27017,ac-scdewbe-shard-00-01.ie0bayw.mongodb.net:27017,ac-scdewbe-shard-00-02.ie0bayw.mongodb.net:27017/?ssl=true&replicaSet=atlas-6vgddv-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0')
-db = client.dbsparta_plus_week2
-
+client = MongoClient(MONGODB_URI)
+db = client[DB_NAME]
 @app.route('/')
 def main():
     words_result = db.words.find({}, {'_id': False})
